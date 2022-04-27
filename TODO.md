@@ -17,4 +17,4 @@
 - [] retry ???
 - [x] optional ws init
 - websocket
-- - [] sub / unsub
+- - [-] sub / unsub
