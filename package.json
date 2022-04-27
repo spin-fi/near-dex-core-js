@@ -1,0 +1,57 @@
+{
+  "name": "@spinfi/core",
+  "version": "0.1.6",
+  "license": "MIT",
+  "keywords": [
+    "spin",
+    "near",
+    "dex",
+    "core"
+  ],
+  "main": "build/index.js",
+  "module": "build/index.esm.js",
+  "types": "build/types/index.d.ts",
+  "scripts": {
+    "build": "cross-env NODE_ENV=production rollup -c",
+    "build:dev": "cross-env NODE_ENV=development rollup -c",
+    "build:docs": "typedoc --options typedoc.json ./docs.ts",
+    "dev": "cross-env NODE_ENV=development rollup -c -w",
+    "dev:docs": "typedoc --options typedoc.json --watch ./docs.ts",
+    "check:types": "tsc -p ./tsconfig.json",
+    "check:format": "prettier --check src",
+    "check:lint": "eslint ./src --ext .ts,.tsx",
+    "clean": "rimraf build yarn-error.log",
+    "prepublish": "yarn build"
+  },
+  "files": [
+    "build/**/*.js",
+    "build/**/*.esm.js",
+    "build/**/*.d.ts"
+  ],
+  "devDependencies": {
+    "@rollup/plugin-typescript": "8.3.1",
+    "@types/node": "17.0.21",
+    "cross-env": "7.0.3",
+    "eslint": "8.11.0",
+    "eslint-plugin-prettier": "4.0.0",
+    "prettier": "2.6.0",
+    "rimraf": "3.0.2",
+    "rollup": "2.70.1",
+    "rollup-plugin-cleaner": "1.0.0",
+    "rollup-plugin-dts": "4.2.0",
+    "rollup-plugin-peer-deps-external": "2.2.4",
+    "rollup-plugin-terser": "7.0.2",
+    "tslib": "2.3.1",
+    "typedoc": "^0.22.15",
+    "typescript": "4.6.2"
+  },
+  "dependencies": {
+    "@spinfi/number": "0.1.6",
+    "@spinfi/shared": "0.1.6",
+    "@spinfi/websocket": "0.1.6",
+    "nanoid": "3.3.2",
+    "near-api-js": "0.44.2",
+    "near-transaction-manager": "0.1.1",
+    "rxjs": "7.5.5"
+  }
+}

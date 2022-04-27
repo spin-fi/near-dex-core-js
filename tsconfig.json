@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": ["types", "src", "./docs.ts"],
+  "compilerOptions": {
+    "target": "ES2015",
+    "lib": ["ESNext"],
+    "strict": true,
+    "declaration": true,
+    "declarationDir": "./types",
+    "moduleResolution": "Node"
+  }
+}
