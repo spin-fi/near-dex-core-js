@@ -1,13 +1,24 @@
 # Links
 
-- [Spin contract/off-chain api](https://docs.api.spin.fi/#introduction)
-- [Spin js api](https://spin-fi.github.io/near-dex-core-js/)
-- [Github @spinfi/core](https://github.com/spin-fi/near-dex-core-js)
-- [Github @spinfi/node](https://github.com/spin-fi/near-dex-node-js)
+- [**Contract api**](https://docs.api.spin.fi/#introduction)
+
+- [**JS api**](https://spin-fi.github.io/near-dex-core-js/)
+
+- [**@spinfi/core**](https://github.com/spin-fi/near-dex-core-js)
+
+- [**@spinfi/node**](https://github.com/spin-fi/near-dex-node-js)
 
 # @spinfi/node
 
 Spin node create spin api for node
+
+### How to install
+
+```bash
+yarn add @spinfi/node
+```
+
+### How to init
 
 ```js
 import {createApi} from '@spinfi/node';
@@ -96,6 +107,8 @@ If websocket return not expected data format - api will ignore it. If websocket 
 message without connection/js error, but with error field - data handled by `onError` callback.
 If websocket connection/js runtime rise error then method function return response.type as `ERROR` and
 no callbacks its called
+
+### How to use
 
 ```js
 const response = api().spin.websocket.ping({
