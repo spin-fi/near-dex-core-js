@@ -1,4 +1,0 @@
-{
-  "entryPoints": ["./docs.ts"],
-  "out": "docs"
-}
