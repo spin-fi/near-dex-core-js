@@ -1,27 +1,52 @@
+# Links
+
+- [Spin contract/off-chain api](https://docs.api.spin.fi/#introduction)
+- [Spin js api](https://spin-fi.github.io/near-dex-core-js/)
+- [Github @spinfi/core](https://github.com/spin-fi/near-dex-core-js)
+- [Github @spinfi/node](https://github.com/spin-fi/near-dex-node-js)
+
+# @spinfi/node
+
+Spin node create spin api for node
+
+```js
+import {createApi} from '@spinfi/node';
+import {getPrestable} from '@spinfi/shared';
+
+const stage = getPrestable();
+
+const data = {
+  accountId: 'some account id value',
+  privateKey: 'some private key value',
+};
+
+const initApi = async () => {
+  const {init} = createApi({
+    contractId: stage.contractId,
+    privateKey: data.privateKey,
+    accountId: data.accountId,
+    websocket: stage.websocket,
+    near: stage.near,
+  });
+
+  const response = await init();
+
+  if (response.type === 'ERROR') {
+    console.error(apiResponse.error);
+  }
+
+  if (response.type === 'OK') {
+    const api = response.data;
+    console.log(api);
+  }
+};
+
+initApi();
+```
+
 # @spinfi/core
 
 Spin core create spin api instace that work exactly in browser and node.js
-
-```js
-const api = createSpin({
-  /**
-   * Contarct ID
-   */
-  contractId,
-  /**
-   * near-api-js account instance
-   */
-  account,
-  /**
-   * near-transaction-manager transaction manager instance
-   */
-  transactionManager,
-  /**
-   * @spinfi/websocket instance
-   */
-  websocket,
-});
-```
 
 ## Contract
 
@@ -152,7 +177,3 @@ if (response.type === 'OK') {
   response.data.unsubscribe();
 }
 ```
-
-## Links
-
-- [Spin backend](https://docs.api.spin.fi/#introduction)

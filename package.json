@@ -8,6 +8,10 @@
     "dex",
     "core"
   ],
+  "bugs": {
+    "url": "https://github.com/spin-fi/near-dex-core-js#readme"
+  },
+  "homepage": "https://spin-fi.github.io/near-dex-core-js/",
   "main": "build/index.js",
   "module": "build/index.esm.js",
   "types": "build/types/index.d.ts",
