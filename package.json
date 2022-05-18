@@ -1,6 +1,6 @@
 {
   "name": "@spinfi/core",
-  "version": "0.1.7",
+  "version": "1.0.1",
   "license": "MIT",
   "keywords": [
     "spin",
@@ -50,8 +50,8 @@
     "typescript": "4.6.2"
   },
   "dependencies": {
-    "@spinfi/number": "0.1.7",
-    "@spinfi/shared": "0.1.6",
+    "@spinfi/number": "^0.1.8",
+    "@spinfi/shared": "^0.2.1",
     "@spinfi/websocket": "0.1.6",
     "nanoid": "3.3.2",
     "near-api-js": "0.44.2",
