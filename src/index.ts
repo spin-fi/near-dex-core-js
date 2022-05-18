@@ -1,6 +1,6 @@
 // Spin
 export {createSpin} from './api';
-export type {Config, Spin, SpinContract, SpinNative, SpinWebsocket} from './types';
+export type {Config, Spin} from './types';
 
 // Contract
 export {USide} from './contract/types';
@@ -64,6 +64,10 @@ export type {
   GetOrderbookPollRequest,
   GetOrderbookPollResponse,
 } from './contract/actions/getOrderbookPoll';
+export type {SwapRequest, SwapResponse, SwapConfig} from './contract/actions/swap';
+export type {SwapFtRequest, SwapFtResponse, SwapFtConfig} from './contract/actions/swapFt';
+export type {SwapNearRequest, SwapNearResponse, SwapNearConfig} from './contract/actions/swapNear';
+export type {GetDryRunSwapRequest, GetDryRunSwapResponse} from './contract/actions/getDryRunSwap';
 
 // Native
 export type {GetBalanceNearResponse} from './native/actions/getBalanceNear';
@@ -80,6 +84,11 @@ export type {
 } from './native/actions/getBalanceStorage';
 export type {GetBalanceFtRequest, GetBalanceFtResponse} from './native/actions/getBalanceFt';
 export {createDepositStorageTransaction} from './native/actions/depositStorage';
+export {createStorageBalanceBounds} from './native/actions/getStorageBalanceBounds';
+export type {
+  GetTransactionStatusRequest,
+  GetTransactionStatusResponse,
+} from './native/actions/getTransactionStatus';
 
 // Websocket
 export {LSide} from './websocket/types';

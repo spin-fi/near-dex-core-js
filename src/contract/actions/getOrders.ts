@@ -22,6 +22,7 @@ export const createGetOrders = ({account, contractId}: ContractConfig) => {
   return async (request: GetOrdersRequest): Promise<GetOrdersResponse> => {
     return await account.viewFunction(contractId, METHOD_NAME, {
       market_id: request.marketId,
+      account_id: account.accountId,
     });
   };
 };

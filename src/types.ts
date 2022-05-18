@@ -1,7 +1,7 @@
 import {Account} from 'near-api-js';
+import {JsonRpcProvider} from 'near-api-js/lib/providers';
 import {TransactionManager} from 'near-transaction-manager';
 import {Websocket, MethodConfig, NotifyConfig} from '@spinfi/websocket';
-import {ResponsifySync, ResponsifyAsync} from '@spinfi/shared';
 import {Subscription} from 'rxjs';
 
 // Contract
@@ -38,6 +38,10 @@ import {GetOrdersRequest, GetOrdersResponse} from './contract/actions/getOrders'
 import {PlaceAskRequest, PlaceAskResponse, PlaceAskConfig} from './contract/actions/placeAsk';
 import {PlaceBidRequest, PlaceBidResponse, PlaceBidConfig} from './contract/actions/placeBid';
 import {WithdrawRequest, WithdrawResponse, WithdrawConfig} from './contract/actions/withdraw';
+import {SwapRequest, SwapResponse, SwapConfig} from './contract/actions/swap';
+import {SwapFtRequest, SwapFtResponse, SwapFtConfig} from './contract/actions/swapFt';
+import {SwapNearRequest, SwapNearResponse, SwapNearConfig} from './contract/actions/swapNear';
+import {GetDryRunSwapRequest, GetDryRunSwapResponse} from './contract/actions/getDryRunSwap';
 
 // Native
 import {GetBalanceRequest, GetBalanceResponse} from './native/actions/getBalance';
@@ -48,6 +52,10 @@ import {
   GetBalanceStorageResponse,
 } from './native/actions/getBalanceStorage';
 import {TransferFtRequest, TransferFtResponse, TransferFtConfig} from './native/actions/transferFt';
+import {
+  GetTransactionStatusRequest,
+  GetTransactionStatusResponse,
+} from './native/actions/getTransactionStatus';
 
 // Websocket
 import {GetCandlesRequest, GetCandlesResponse} from './websocket/actions/getCandles';
@@ -97,6 +105,10 @@ export interface Config {
    * @spinfi/websocket instance
    */
   websocket?: Websocket;
+  /**
+   * TODO
+   */
+  provider?: JsonRpcProvider;
 }
 
 /**
@@ -115,6 +127,10 @@ export interface ContractConfig {
    * near-transaction-manager transaction manager instance
    */
   transactionManager: TransactionManager;
+  /**
+   * TODO
+   */
+  provider: JsonRpcProvider;
 }
 
 /**
@@ -125,6 +141,10 @@ export interface NativeConfig {
    * near-api-js account instance
    */
   account: Account;
+  /**
+   * TODO
+   */
+  provider: JsonRpcProvider;
 }
 
 /**
@@ -140,103 +160,60 @@ export interface WebsocketConfig {
 /**
  * @category spin
  */
-export interface SpinContract {
+export interface Spin {
+  // -== CONTRACT BLOCK ==-
   /**
    * Method allows you to perform many operations within a single transaction
    *
    * @example
    * ```js
-   * const response = await api().spin.contract.batchOps(request);
-   *
-   * if (response.type === 'ERROR') {
-   *   console.error(response.error);
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   console.log(response.data);
-   * }
+   * const response = await spin.batchOps(request);
    * ```
    */
-  batchOps: ResponsifyAsync<
-    (request: BatchOpsRequest, config?: BatchOpsConfig) => Promise<BatchOpsResponse>
-  >;
+  batchOps: (request: BatchOpsRequest, config?: BatchOpsConfig) => Promise<BatchOpsResponse>;
   /**
    * Cancel an order for a specified market by order ID
    *
    * @example
    * ```js
-   * const response = await api().spin.contract.cancelOrder(request);
-   *
-   * if (response.type === 'ERROR') {
-   *   console.error(response.error);
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   console.log(response.data);
-   * }
+   * const response = await spin.cancelOrder(request);
    * ```
    */
-  cancelOrder: ResponsifyAsync<
-    (request: CancelOrderRequest, config?: CancelOrderConfig) => Promise<CancelOrderResponse>
-  >;
+  cancelOrder: (
+    request: CancelOrderRequest,
+    config?: CancelOrderConfig,
+  ) => Promise<CancelOrderResponse>;
   /**
    * Cancel all user orders for a specified market
    *
    * @example
    * ```js
-   * const response = await api().spin.contract.cancelOrders(request);
-   *
-   * if (response.type === 'ERROR') {
-   *   console.error(response.error);
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   console.log(response.data);
-   * }
+   * const response = await spin.cancelOrders(request);
    * ```
    */
-  cancelOrders: ResponsifyAsync<
-    (request: CancelOrdersRequest, config?: CancelOrdersConfig) => Promise<CancelOrdersResponse>
-  >;
+  cancelOrders: (
+    request: CancelOrdersRequest,
+    config?: CancelOrdersConfig,
+  ) => Promise<CancelOrdersResponse>;
   /**
    * Deposit ft and near
    *
    * @example
    * ```js
-   * const response = await api().spin.contract.deposit(request);
-   *
-   * if (response.type === 'ERROR') {
-   *   console.error(response.error);
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   console.log(response.data);
-   * }
+   * const response = await spin.deposit(request);
    * ```
    */
-  deposit: ResponsifyAsync<
-    (request: DepositRequest, config?: DepositConfig) => Promise<DepositResponse>
-  >;
+  deposit: (request: DepositRequest, config?: DepositConfig) => Promise<DepositResponse>;
   /**
    * To deposit tokens to your spor account you need to call ft_transfer_call of
    * the token contract and send as a receiver
    *
    * @example
    * ```js
-   * const response = await api().spin.contract.depositFt(request);
-   *
-   * if (response.type === 'ERROR') {
-   *   console.error(response.error);
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   console.log(response.data);
-   * }
+   * const response = await spin.depositFt(request);
    * ```
    */
-  depositFt: ResponsifyAsync<
-    (request: DepositFtRequest, config?: DepositFtConfig) => Promise<DepositFtResponse>
-  >;
+  depositFt: (request: DepositFtRequest, config?: DepositFtConfig) => Promise<DepositFtResponse>;
   /**
    * NEAR token is transferred by attaching them to a transaction.
    * The attached amount will be credited to the trading account.
@@ -244,374 +221,246 @@ export interface SpinContract {
    *
    * @example
    * ```js
-   * const response = await api().spin.contract.depositNear(request);
-   *
-   * if (response.type === 'ERROR') {
-   *   console.error(response.error);
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   console.log(response.data);
-   * }
+   * const response = await spin.depositNear(request);
    * ```
    */
-  depositNear: ResponsifyAsync<
-    (request: DepositNearRequest, config?: DepositNearConfig) => Promise<DepositNearResponse>
-  >;
+  depositNear: (
+    request: DepositNearRequest,
+    config?: DepositNearConfig,
+  ) => Promise<DepositNearResponse>;
   /**
    * Returns all currencies supported by the contract
    *
    * @example
    * ```js
-   * const response = await api().spin.contract.getCurrencies(request);
-   *
-   * if (response.type === 'ERROR') {
-   *   console.error(response.error);
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   console.log(response.data);
-   * }
+   * const response = await spin.getCurrencies(request);
    * ```
    */
-  getCurrencies: ResponsifyAsync<(request: GetCurrenciesRequest) => Promise<GetCurrenciesResponse>>;
+  getCurrencies: (request: GetCurrenciesRequest) => Promise<GetCurrenciesResponse>;
   /**
    * Returns account balannces by account ID
    *
    * @example
    * ```js
-   * const response = await api().spin.contract.getDeposits();
-   *
-   * if (response.type === 'ERROR') {
-   *   console.error(response.error);
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   console.log(response.data);
-   * }
+   * const response = await spin.getDeposits();
    * ```
    */
-  getDeposits: ResponsifyAsync<() => Promise<GetDepositsResponse>>;
+  getDeposits: () => Promise<GetDepositsResponse>;
   /**
    * Returns market info by ID supported by the contract
    *
    * @example
    * ```js
-   * const response = await api().spin.contract.getMarket(request);
-   *
-   * if (response.type === 'ERROR') {
-   *   console.error(response.error);
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   console.log(response.data);
-   * }
+   * const response = await spin.getMarket(request);
    * ```
    */
-  getMarket: ResponsifyAsync<(request: GetMarketRequest) => Promise<GetMarketResponse>>;
+  getMarket: (request: GetMarketRequest) => Promise<GetMarketResponse>;
   /**
    * Returns all markets info supported by the contract
    *
    * @example
    * ```js
-   * const response = await api().spin.contract.getMarkets();
-   *
-   * if (response.type === 'ERROR') {
-   *   console.error(response.error);
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   console.log(response.data);
-   * }
+   * const response = await spin.getMarkets();
    * ```
    */
-  getMarkets: ResponsifyAsync<() => Promise<GetMarketsResponse>>;
+  getMarkets: () => Promise<GetMarketsResponse>;
   /**
    * Returns the current information about order by market ID, order ID and account ID
    *
    * @example
    * ```js
-   * const response = await api().spin.contract.getOrder(request);
-   *
-   * if (response.type === 'ERROR') {
-   *   console.error(response.error);
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   console.log(response.data);
-   * }
+   * const response = await spin.getOrder(request);
    * ```
    */
-  getOrder: ResponsifyAsync<(request: GetOrderRequest) => Promise<GetOrderResponse>>;
+  getOrder: (request: GetOrderRequest) => Promise<GetOrderResponse>;
   /**
    * Returns the order book information for a given market ID
    *
    * @example
    * ```js
-   * const response = await api().spin.contract.getOrderbook(request);
-   *
-   * if (response.type === 'ERROR') {
-   *   console.error(response.error);
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   console.log(response.data);
-   * }
+   * const response = await spin.getOrderbook(request);
    * ```
    */
-  getOrderbook: ResponsifyAsync<(request: GetOrderbookRequest) => Promise<GetOrderbookResponse>>;
+  getOrderbook: (request: GetOrderbookRequest) => Promise<GetOrderbookResponse>;
   /**
    * Orderbook polling
    *
    * @example
    * ```js
-   * const response = api().spin.contract.getOrderbookPoll(request, {
+   * const stop = spin.getOrderbookPoll(request, {
    *   onOk: (data) => console.log(data),
    *   onError: (error) => console.error(error),
    * });
    *
-   * if (response.type === 'ERROR') {
-   *   console.warn("Polling not started");
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   response.data.stop();
-   * }
+   * stop();
    * ```
    */
-  getOrderbookPoll: ResponsifySync<
-    (request: GetOrderbookPollRequest, config?: GetOrderbookPollConfig) => GetOrderbookPollResponse
-  >;
+  getOrderbookPoll: (
+    request: GetOrderbookPollRequest,
+    config?: GetOrderbookPollConfig,
+  ) => GetOrderbookPollResponse;
   /**
    * Returns a list of orders belonging to a given account on a specified market
    *
    * @example
    * ```js
-   * const response = await api().spin.contract.getOrders(request);
-   *
-   * if (response.type === 'ERROR') {
-   *   console.error(response.error);
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   console.log(response.data);
-   * }
+   * const response = await spin.getOrders(request);
    * ```
    */
-  getOrders: ResponsifyAsync<(request: GetOrdersRequest) => Promise<GetOrdersResponse>>;
+  getOrders: (request: GetOrdersRequest) => Promise<GetOrdersResponse>;
   /**
    * Place ask
    *
    * @example
    * ```js
-   * const response = await api().spin.contract.placeAsk(request);
-   *
-   * if (response.type === 'ERROR') {
-   *   console.error(response.error);
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   console.log(response.data);
-   * }
+   * const response = await spin.placeAsk(request);
    * ```
    */
-  placeAsk: ResponsifyAsync<
-    (request: PlaceAskRequest, config?: PlaceAskConfig) => Promise<PlaceAskResponse>
-  >;
+  placeAsk: (request: PlaceAskRequest, config?: PlaceAskConfig) => Promise<PlaceAskResponse>;
   /**
    * Place bid
    *
    * @example
    * ```js
-   * const response = await api().spin.contract.placeBid(request);
-   *
-   * if (response.type === 'ERROR') {
-   *   console.error(response.error);
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   console.log(response.data);
-   * }
+   * const response = await spin.placeBid(request);
    * ```
    */
-  placeBid: ResponsifyAsync<
-    (request: PlaceBidRequest, config?: PlaceBidConfig) => Promise<PlaceBidResponse>
-  >;
+  placeBid: (request: PlaceBidRequest, config?: PlaceBidConfig) => Promise<PlaceBidResponse>;
   /**
    * Withdraws token from the trading account to the user's account
    *
    * @example
    * ```js
-   * const response = await api().spin.contract.withdraw(request);
-   *
-   * if (response.type === 'ERROR') {
-   *   console.error(response.error);
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   console.log(response.data);
-   * }
+   * const response = await spin.withdraw(request);
    * ```
    */
-  withdraw: ResponsifyAsync<
-    (request: WithdrawRequest, config?: WithdrawConfig) => Promise<WithdrawResponse>
-  >;
-}
-
-/**
- * @category spin
- */
-export interface SpinNative {
+  withdraw: (request: WithdrawRequest, config?: WithdrawConfig) => Promise<WithdrawResponse>;
+  /**
+   * TODO
+   */
+  swap: (request: SwapRequest, config?: SwapConfig) => Promise<SwapResponse>;
+  /**
+   * TODO
+   */
+  swapFt: (request: SwapFtRequest, config?: SwapFtConfig) => Promise<SwapFtResponse>;
+  /**
+   * TODO
+   */
+  swapNear: (request: SwapNearRequest, config?: SwapNearConfig) => Promise<SwapNearResponse>;
+  /**
+   * TODO
+   */
+  getDryRunSwap: (request: GetDryRunSwapRequest) => Promise<GetDryRunSwapResponse>;
+  // -== NATIVE BLOCK ==-
   /**
    * Get balance
    *
    * @example
    * ```js
-   * const response = await api().spin.native.getBalance(request);
-   *
-   * if (response.type === 'ERROR') {
-   *   console.error(response.error);
-   * }
+   * const response = await spin.getBalance(request);
    * ```
    */
-  getBalance: ResponsifyAsync<(request: GetBalanceRequest) => Promise<GetBalanceResponse>>;
+  getBalance: (request: GetBalanceRequest) => Promise<GetBalanceResponse>;
   /**
    * Get balance ft
    *
    * @example
    * ```js
-   * const response = await api().spin.native.getBalanceFt(request);
-   *
-   * if (response.type === 'ERROR') {
-   *   console.error(response.error);
-   * }
+   * const response = await spin.getBalanceFt(request);
    * ```
    */
-  getBalanceFt: ResponsifyAsync<(request: GetBalanceFtRequest) => Promise<GetBalanceFtResponse>>;
+  getBalanceFt: (request: GetBalanceFtRequest) => Promise<GetBalanceFtResponse>;
   /**
    * Get balance near
    *
    * @example
    * ```js
-   * const response = await api().spin.native.getBalanceNear();
-   *
-   * if (response.type === 'ERROR') {
-   *   console.error(response.error);
-   * }
+   * const response = await spin.getBalanceNear();
    * ```
    */
-  getBalanceNear: ResponsifyAsync<() => Promise<GetBalanceNearResponse>>;
+  getBalanceNear: () => Promise<GetBalanceNearResponse>;
   /**
    * Get balance storage
    *
    * @example
    * ```js
-   * const response = await api().spin.native.getBalanceStorage(request);
-   *
-   * if (response.type === 'ERROR') {
-   *   console.error(response.error);
-   * }
+   * const response = await spin.getBalanceStorage(request);
    * ```
    */
-  getBalanceStorage: ResponsifyAsync<
-    (request: GetBalanceStorageRequest) => Promise<GetBalanceStorageResponse>
-  >;
+  getBalanceStorage: (request: GetBalanceStorageRequest) => Promise<GetBalanceStorageResponse>;
   /**
    * Transfer ft
    *
    * @example
    * ```js
-   * const response = await api().spin.native.transferFt(request);
-   *
-   * if (response.type === 'ERROR') {
-   *   console.error(response.error);
-   * }
+   * const response = await spin.transferFt(request);
    * ```
    */
-  transferFt: ResponsifyAsync<
-    (request: TransferFtRequest, config?: TransferFtConfig) => Promise<TransferFtResponse>
-  >;
-}
-
-/**
- * @category spin
- */
-export interface SpinWebsocket {
+  transferFt: (
+    request: TransferFtRequest,
+    config?: TransferFtConfig,
+  ) => Promise<TransferFtResponse>;
+  /**
+   * TODO
+   */
+  getTransactionStatus: (
+    request: GetTransactionStatusRequest,
+  ) => Promise<GetTransactionStatusResponse>;
+  // -== WEBSOCKET BLOCK ==-
   /**
    * Returns history of candles to use in OHLC chart
    *
    * @example
    * ```js
-   * const response = api().spin.websocket.getCandles(request, {
+   * const unsubscribe = spin.getCandles(request, {
    *   onOk: (data) => console.log(data),
    *   onError: (error) => console.error(error),
    * });
    *
-   * if (response.type === 'ERROR') {
-   *   console.warn('Method not sended');
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   response.data.unsubscribe();
-   * }
+   * unsubscribe();
    * ```
    */
-  getCandles: ResponsifySync<
-    (request: GetCandlesRequest, config?: MethodConfig<GetCandlesResponse>) => Subscription
-  >;
+  getCandles: (
+    request: GetCandlesRequest,
+    config?: MethodConfig<GetCandlesResponse>,
+  ) => Subscription;
   /**
    * Returns history of orders that have been partially or fully filled, cancelled or expired
    *
    * @example
    * ```js
-   * const response = api().spin.websocket.getOrdersHistory(request, {
+   * const unsubscribe = spin.getOrdersHistory(request, {
    *   onOk: (data) => console.log(data),
    *   onError: (error) => console.error(error),
    * });
    *
-   * if (response.type === 'ERROR') {
-   *   console.warn('Method not sended');
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   response.data.unsubscribe();
-   * }
+   * unsubscribe();
    * ```
    */
-  getOrdersHistory: ResponsifySync<
-    (
-      request: GetOrdersHistoryRequest,
-      config?: MethodConfig<GetOrdersHistoryResponse>,
-    ) => Subscription
-  >;
+  getOrdersHistory: (
+    request: GetOrdersHistoryRequest,
+    config?: MethodConfig<GetOrdersHistoryResponse>,
+  ) => Subscription;
   /**
    * Returns the latest trades that have occurred for instruments in a specific market ID
    *
    * @example
    * ```js
-   * const response = api().spin.websocket.getTrades(request, {
+   * const unsubscribe = spin.getTrades(request, {
    *   onOk: (data) => console.log(data),
    *   onError: (error) => console.error(error),
    * });
    *
-   * if (response.type === 'ERROR') {
-   *   console.warn('Method not sended');
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   response.data.unsubscribe();
-   * }
+   * unsubscribe();
    * ```
    */
-  getTrades: ResponsifySync<
-    (request: GetTradesRequest, config?: MethodConfig<GetTradesResponse>) => Subscription
-  >;
+  getTrades: (request: GetTradesRequest, config?: MethodConfig<GetTradesResponse>) => Subscription;
   /**
    * Subscribes to the balance changes stream of a particular account by it's ID
    *
    * @example
    * ```js
-   * const response = api().spin.websocket.listenAccountBalances(request, {
+   * const unsubscribe = spin.listenAccountBalances(request, {
    *   onNotifyOk: (data) => console.log(data),
    *   onStateOk: (data) => console.log(data),
    *   onSubOk: (data) => console.log(data),
@@ -622,27 +471,19 @@ export interface SpinWebsocket {
    *   onStateError: (error) => console.error(error),
    * });
    *
-   * if (response.type === 'ERROR') {
-   *   console.warn('Listening not established');
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   response.data.unsubscribe();
-   * }
+   * unsubscribe();
    * ```
    */
-  listenAccountBalances: ResponsifySync<
-    (
-      request: ListenAccountBalancesRequest,
-      config?: NotifyConfig<AccountBalancesState, AccountBalancesNotify>,
-    ) => Subscription
-  >;
+  listenAccountBalances: (
+    request: ListenAccountBalancesRequest,
+    config?: NotifyConfig<AccountBalancesState, AccountBalancesNotify>,
+  ) => Subscription;
   /**
    * Subscribes to the all orders stream of a particular account by it's ID
    *
    * @example
    * ```js
-   * const response = api().spin.websocket.listenAccountOrders(request, {
+   * const unsubscribe = spin.listenAccountOrders(request, {
    *   onNotifyOk: (data) => console.log(data),
    *   onStateOk: (data) => console.log(data),
    *   onSubOk: (data) => console.log(data),
@@ -653,27 +494,19 @@ export interface SpinWebsocket {
    *   onStateError: (error) => console.error(error),
    * });
    *
-   * if (response.type === 'ERROR') {
-   *   console.warn('Listening not established');
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   response.data.unsubscribe();
-   * }
+   * unsubscribe();
    * ```
    */
-  listenAccountOrders: ResponsifySync<
-    (
-      request: ListenAccountOrdersRequest,
-      config?: NotifyConfig<AccountOrdersState, AccountOrdersNotify>,
-    ) => Subscription
-  >;
+  listenAccountOrders: (
+    request: ListenAccountOrdersRequest,
+    config?: NotifyConfig<AccountOrdersState, AccountOrdersNotify>,
+  ) => Subscription;
   /**
    * Subscribes to the trades stream of a particular account by it's ID
    *
    * @example
    * ```js
-   * const response = api().spin.websocket.listenAccountTrades(request, {
+   * const unsubscribe = spin.listenAccountTrades(request, {
    *   onNotifyOk: (data) => console.log(data),
    *   onStateOk: (data) => console.log(data),
    *   onSubOk: (data) => console.log(data),
@@ -684,21 +517,13 @@ export interface SpinWebsocket {
    *   onStateError: (error) => console.error(error),
    * });
    *
-   * if (response.type === 'ERROR') {
-   *   console.warn('Listening not established');
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   response.data.unsubscribe();
-   * }
+   * unsubscribe();
    * ```
    */
-  listenAccountTrades: ResponsifySync<
-    (
-      request: ListenAccountTradesRequest,
-      config?: NotifyConfig<void, AccountTradesNotify>,
-    ) => Subscription
-  >;
+  listenAccountTrades: (
+    request: ListenAccountTradesRequest,
+    config?: NotifyConfig<void, AccountTradesNotify>,
+  ) => Subscription;
   /**
    * Subscribe to the orderbook L1 data. Notifications are sent every time when best bid or best ask were changed.
    * That changes couldn't be generated more often than block is validated and added in near blockchain,
@@ -706,7 +531,7 @@ export interface SpinWebsocket {
    *
    * @example
    * ```js
-   * const response = api().spin.websocket.listenBookL1(request, {
+   * const unsubscribe = spin.listenBookL1(request, {
    *   onNotifyOk: (data) => console.log(data),
    *   onStateOk: (data) => console.log(data),
    *   onSubOk: (data) => console.log(data),
@@ -717,18 +542,13 @@ export interface SpinWebsocket {
    *   onStateError: (error) => console.error(error),
    * });
    *
-   * if (response.type === 'ERROR') {
-   *   console.warn('Listening not established');
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   response.data.unsubscribe();
-   * }
+   * unsubscribe();
    * ```
    */
-  listenBookL1: ResponsifySync<
-    (request: ListenBookL1Request, config?: NotifyConfig<void, BookL1Notify>) => Subscription
-  >;
+  listenBookL1: (
+    request: ListenBookL1Request,
+    config?: NotifyConfig<void, BookL1Notify>,
+  ) => Subscription;
   /**
    * Subscribe to the orderbook L2 data. L2 data consists a snapshot of the bids/asks prices and quantities with a specific depth.
    * Right now notifications are sent every 100 millisecond, but don't forget that each block in blockchain is
@@ -737,7 +557,7 @@ export interface SpinWebsocket {
    *
    * @example
    * ```js
-   * const response = api().spin.websocket.listenBookL2(request, {
+   * const unsubscribe = spin.listenBookL2(request, {
    *   onNotifyOk: (data) => console.log(data),
    *   onStateOk: (data) => console.log(data),
    *   onSubOk: (data) => console.log(data),
@@ -748,18 +568,13 @@ export interface SpinWebsocket {
    *   onStateError: (error) => console.error(error),
    * });
    *
-   * if (response.type === 'ERROR') {
-   *   console.warn('Listening not established');
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   response.data.unsubscribe();
-   * }
+   * unsubscribe();
    * ```
    */
-  listenBookL2: ResponsifySync<
-    (request: ListenBookL2Request, config?: NotifyConfig<void, BookL2Notify>) => Subscription
-  >;
+  listenBookL2: (
+    request: ListenBookL2Request,
+    config?: NotifyConfig<void, BookL2Notify>,
+  ) => Subscription;
   /**
    * Subscribe to the orderbook L3 data. In response you receive an initial snapshot of the orderbook.
    * There is a last_change_id field that is used to validate integrity of the orderbook events sequence.
@@ -769,7 +584,7 @@ export interface SpinWebsocket {
    *
    * @example
    * ```js
-   * const response = api().spin.websocket.listenBookL3(request, {
+   * const unsubscribe = spin.listenBookL3(request, {
    *   onNotifyOk: (data) => console.log(data),
    *   onStateOk: (data) => console.log(data),
    *   onSubOk: (data) => console.log(data),
@@ -780,24 +595,19 @@ export interface SpinWebsocket {
    *   onStateError: (error) => console.error(error),
    * });
    *
-   * if (response.type === 'ERROR') {
-   *   console.warn('Listening not established');
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   response.data.unsubscribe();
-   * }
+   * unsubscribe();
    * ```
    */
-  listenBookL3: ResponsifySync<
-    (request: ListenBookL3Request, config?: NotifyConfig<BookL3State, BookL3Notify>) => Subscription
-  >;
+  listenBookL3: (
+    request: ListenBookL3Request,
+    config?: NotifyConfig<BookL3State, BookL3Notify>,
+  ) => Subscription;
   /**
    * Subscribes to the all orders stream of a particular market by it's id
    *
    * @example
    * ```js
-   * const response = api().spin.websocket.listenOrders(request, {
+   * const unsubscribe = spin.listenOrders(request, {
    *   onNotifyOk: (data) => console.log(data),
    *   onStateOk: (data) => console.log(data),
    *   onSubOk: (data) => console.log(data),
@@ -808,24 +618,19 @@ export interface SpinWebsocket {
    *   onStateError: (error) => console.error(error),
    * });
    *
-   * if (response.type === 'ERROR') {
-   *   console.warn('Listening not established');
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   response.data.unsubscribe();
-   * }
+   * unsubscribe();
    * ```
    */
-  listenOrders: ResponsifySync<
-    (request: ListenOrdersRequest, config?: NotifyConfig<void, OrdersNotify>) => Subscription
-  >;
+  listenOrders: (
+    request: ListenOrdersRequest,
+    config?: NotifyConfig<void, OrdersNotify>,
+  ) => Subscription;
   /**
    * Subscribes to the trades stream of a particular market by it's id
    *
    * @example
    * ```js
-   * const response = api().spin.websocket.listenTrades(request, {
+   * const unsubscribe = spin.listenTrades(request, {
    *   onNotifyOk: (data) => console.log(data),
    *   onStateOk: (data) => console.log(data),
    *   onSubOk: (data) => console.log(data),
@@ -836,45 +641,25 @@ export interface SpinWebsocket {
    *   onStateError: (error) => console.error(error),
    * });
    *
-   * if (response.type === 'ERROR') {
-   *   console.warn('Listening not established');
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   response.data.unsubscribe();
-   * }
+   * unsubscribe();
    * ```
    */
-  listenTrades: ResponsifySync<
-    (request: ListenTradesRequest, config?: NotifyConfig<void, TradesNotify>) => Subscription
-  >;
+  listenTrades: (
+    request: ListenTradesRequest,
+    config?: NotifyConfig<void, TradesNotify>,
+  ) => Subscription;
   /**
    * Health check method for gateway API
    *
    * @example
    * ```js
-   * const response = api().spin.websocket.ping({
+   * const unsubscribe = spin.ping({
    *   onOk: (data) => console.log(data),
    *   onError: (error) => console.error(error),
    * });
    *
-   * if (response.type === 'ERROR') {
-   *   console.warn('Method not sended');
-   * }
-   *
-   * if (response.type === 'OK') {
-   *   response.data.unsubscribe();
-   * }
+   * unsubscribe();
    * ```
    */
-  ping: ResponsifySync<(config?: MethodConfig<PingResponse>) => Subscription>;
-}
-
-/**
- * @category spin
- */
-export interface Spin {
-  contract: SpinContract;
-  native: SpinNative;
-  websocket: SpinWebsocket;
+  ping: (config?: MethodConfig<PingResponse>) => Subscription;
 }

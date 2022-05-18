@@ -1,12 +1,12 @@
 import {FinalExecutionOutcome} from 'near-api-js/lib/providers';
 import {transactions} from 'near-api-js';
 import {near} from '@spinfi/number';
-import {guardNull} from '@spinfi/shared';
+import {guardNull, isNear} from '@spinfi/shared';
 
 import {ContractConfig} from '../../types';
 import {createGetBalanceStorage} from '../../native/actions/getBalanceStorage';
 import {createDepositStorageTransaction} from '../../native/actions/depositStorage';
-import {isNear} from '../../utils';
+import {createStorageBalanceBounds} from '../../native/actions/getStorageBalanceBounds';
 
 /**
  * @category withdraw
@@ -58,7 +58,7 @@ const FT_DEPOSIT = near('1', true).unwrap();
 const METHOD_NAME = 'withdraw';
 
 export const createWithdraw = (config: ContractConfig) => {
-  const {transactionManager, contractId} = config;
+  const {transactionManager, contractId, account} = config;
   const getBalanceStorage = createGetBalanceStorage(config);
 
   return async (request: WithdrawRequest, config?: WithdrawConfig): Promise<WithdrawResponse> => {
@@ -68,9 +68,15 @@ export const createWithdraw = (config: ContractConfig) => {
       const balanceStorage = await getBalanceStorage(request);
 
       if (guardNull(balanceStorage)) {
+        const storageBalanceBounds = await createStorageBalanceBounds(
+          account,
+          request.tokenAddress,
+        );
+
         const depositStorageTransaction = await createDepositStorageTransaction(
           request.tokenAddress,
           transactionManager,
+          storageBalanceBounds?.min,
         );
         transactionList.push(depositStorageTransaction);
       }

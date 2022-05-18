@@ -28,7 +28,7 @@ export interface DepositNearConfig {
   gas?: BigInt;
 }
 
-const GAS = near('300000000000000', true).unwrap();
+const GAS = near('290000000000000', true).unwrap();
 
 const METHOD_NAME = 'deposit_near';
 

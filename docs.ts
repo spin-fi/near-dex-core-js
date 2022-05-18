@@ -46,18 +46,6 @@ export type {
 export type {Account, AccountBalance} from 'near-api-js/lib/account';
 
 /**
- * @category @spinfi/shared
- */
-export type {
-  Response,
-  ResponseError,
-  ResponseOk,
-  ResponseConfig,
-  ResponsifySync,
-  ResponsifyAsync,
-} from '@spinfi/shared';
-
-/**
  * @category @spinfi/websocket
  */
 export type {

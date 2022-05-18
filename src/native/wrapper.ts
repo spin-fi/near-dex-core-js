@@ -1,14 +1,20 @@
-import {invariant, responsifyAsync} from '@spinfi/shared';
+import {invariant} from '@spinfi/shared';
 
 import {Config, NativeConfig} from '../types';
-import {ACCOUNT_MESSAGE} from './consts';
+import {ACCOUNT_MESSAGE, PROVIDER_MESSAGE} from './consts';
 
-export const createAsyncNativeWrapper = ({account}: Config) => {
+export const createAsyncNativeWrapper = ({account, provider}: Config) => {
   return <T extends any[], R>(create: (config: NativeConfig) => (...args: T) => Promise<R>) => {
-    return responsifyAsync((...args: T) => {
+    return (...args: T) => {
       invariant(account, ACCOUNT_MESSAGE);
-      const action = create({account});
+      invariant(provider, PROVIDER_MESSAGE);
+
+      const action = create({
+        account,
+        provider,
+      });
+
       return action(...args);
-    });
+    };
   };
 };

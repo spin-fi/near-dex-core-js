@@ -1,7 +1,8 @@
+import {isNear} from '@spinfi/shared';
+
 import {NativeConfig} from '../../types';
 import {createGetBalanceNear} from './getBalanceNear';
 import {createGetBalanceFt} from './getBalanceFt';
-import {isNear} from '../../utils';
 
 /**
  * @category getBalance

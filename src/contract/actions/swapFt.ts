@@ -4,18 +4,26 @@ import {near} from '@spinfi/number';
 import {ContractConfig} from '../../types';
 
 /**
- * @category depositFt
+ * @category swapFt
  */
-export type DepositFtResponse = FinalExecutionOutcome;
+export type SwapFtResponse = FinalExecutionOutcome;
 
 /**
- * @category depositFt
+ * @category swapFt
  */
-export interface DepositFtRequest {
+export interface SwapFtRequest {
+  /**
+   * Market identifier to exchange
+   */
+  marketId: number;
   /**
    * Token Address
    */
   tokenAddress: string;
+  /**
+   * Market order stop price
+   */
+  price: BigInt;
   /**
    * Amount in decimal
    */
@@ -23,9 +31,9 @@ export interface DepositFtRequest {
 }
 
 /**
- * @category depositFt
+ * @category swapFt
  */
-export interface DepositFtConfig {
+export interface SwapFtConfig {
   /**
    * Gas in decimal
    */
@@ -36,26 +44,24 @@ export interface DepositFtConfig {
   attachedDeposit?: BigInt;
 }
 
-const GAS = near('290000000000000', true).unwrap();
+const GAS = near('300000000000000', true).unwrap();
 
 const ATTACHED_DEPOSIT = near('1', true).unwrap();
 
-const MSG = '';
-
 const METHOD_NAME = 'ft_transfer_call';
 
-export const createDepositFt = ({account, contractId}: ContractConfig) => {
-  return async (
-    request: DepositFtRequest,
-    config?: DepositFtConfig,
-  ): Promise<DepositFtResponse> => {
+export const createSwapFt = ({account, contractId}: ContractConfig) => {
+  return async (request: SwapFtRequest, config?: SwapFtConfig): Promise<SwapFtResponse> => {
     return await account.functionCall({
       contractId: request.tokenAddress,
       methodName: METHOD_NAME,
       args: {
         receiver_id: contractId,
         amount: request.amount.toString(),
-        msg: MSG,
+        msg: JSON.stringify({
+          market_id: request.marketId,
+          price: request.price.toString(),
+        }),
       },
       gas: config?.gas?.toString() ?? GAS,
       attachedDeposit: config?.attachedDeposit?.toString() ?? ATTACHED_DEPOSIT,

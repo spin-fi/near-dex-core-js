@@ -1,7 +1,7 @@
 import {FinalExecutionOutcome} from 'near-api-js/lib/providers';
+import {isNear} from '@spinfi/shared';
 
 import {ContractConfig} from '../../types';
-import {isNear} from '../../utils';
 import {createDepositNear} from './depositNear';
 import {createDepositFt} from './depositFt';
 

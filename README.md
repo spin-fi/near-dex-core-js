@@ -21,74 +21,18 @@ yarn add @spinfi/node
 ### How to init
 
 ```js
-import {createApi} from '@spinfi/node';
-import {getPrestable} from '@spinfi/shared';
-
-const stage = getPrestable();
-
-const data = {
+const {spin} = await createApi({
   accountId: 'some account id value',
   privateKey: 'some private key value',
-};
-
-const initApi = async () => {
-  const {init} = createApi({
-    contractId: stage.contractId,
-    privateKey: data.privateKey,
-    accountId: data.accountId,
-    websocket: stage.websocket,
-    near: stage.near,
-  });
-
-  const response = await init();
-
-  if (response.type === 'ERROR') {
-    console.error(apiResponse.error);
-  }
-
-  if (response.type === 'OK') {
-    const api = response.data;
-    console.log(api);
-  }
-};
-
-initApi();
+});
 ```
 
 # @spinfi/core
 
 Spin core create spin api instace that work exactly in browser and node.js
 
-## Contract
-
-Contract property provide functions to call `spin` contract api methods as async/await js functions
-
 ```js
-const response = await api().spin.contract.depositFt(request);
-
-if (response.type === 'ERROR') {
-  console.error(response.error);
-}
-
-if (response.type === 'OK') {
-  console.log(response.data);
-}
-```
-
-## Natvive
-
-Native property provide functions to call native near api methods used in `spin` contract methods
-
-```js
-const response = await api().spin.native.transferFt(request);
-
-if (response.type === 'ERROR') {
-  console.error(response.error);
-}
-
-if (response.type === 'OK') {
-  console.log(response.data);
-}
+const response = await spin.depositFt(request);
 ```
 
 ## Websocket
@@ -104,25 +48,15 @@ Websocket method divided in two types:
 
 Method require some parameters in `json rpc` format and return some data with `onOk` callback.
 If websocket return not expected data format - api will ignore it. If websocket return correct
-message without connection/js error, but with error field - data handled by `onError` callback.
-If websocket connection/js runtime rise error then method function return response.type as `ERROR` and
-no callbacks its called
+message without connection/js error, but with error field - data handled by `onError` callback
 
 ### How to use
 
 ```js
-const response = api().spin.websocket.ping({
+const unsubscribe = spin.ping({
   onOk: (data) => console.log(data),
   onError: (error) => console.error(error),
 });
-
-if (response.type === 'ERROR') {
-  console.warn('Method not sended');
-}
-
-if (response.type === 'OK') {
-  response.data.unsubscribe();
-}
 ```
 
 ### 2. Subscription
@@ -134,7 +68,7 @@ Subscription its like method but more complex. It work like that:
 - if new websocket message its for `channel` then api call corresponding subscription callbacks
 
 ```js
-const response = api().spin.websocket.listenOrders(request, {
+const unsubscribe = spin.listenOrders(request, {
   onSubOk: (data) => console.log(data),
   onSubError: (error) => console.error(error),
 });
@@ -148,24 +82,12 @@ Websoket message match with channel by `json rpc` id created when subscription c
 created by server
 
 ```js
-const response = api().spin.websocket.listenOrders(request, {
+const unsubscribe = spin.listenOrders(request, {
   onNotifyOk: (data) => console.log(data),
   onNotifyError: (error) => console.error(error),
   onStateOk: (data) => console.log(data),
   onStateError: (error) => console.error(error),
 });
-```
-
-All subscription callbacks called when websocket get valid message and match channel. If websocket break
-connection before subscription call or js runtime rise error then response type will be `ERROR` and
-websocket listner from init steps will not be created (callbacks not be called)
-
-```js
-const response = api().spin.websocket.listenOrders(request);
-
-if (response.type === 'ERROR') {
-  console.warn('Listening not established');
-}
 ```
 
 Some times its needed unsubscribe from subscription. It work like that:
@@ -177,16 +99,8 @@ Some times its needed unsubscribe from subscription. It work like that:
 - `onUnsubError` handle `false` branch
 
 ```js
-const response = api().spin.websocket.listenOrders(request, {
+const unsubscribe = spin.listenOrders(request, {
   onSubError: (error) => console.error(error),
   onUnsubError: (error) => console.error(error),
 });
-
-if (response.type === 'ERROR') {
-  console.warn('Listening not established');
-}
-
-if (response.type === 'OK') {
-  response.data.unsubscribe();
-}
 ```

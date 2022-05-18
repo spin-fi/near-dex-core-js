@@ -20,6 +20,10 @@ import {createDepositNear} from './contract/actions/depositNear';
 import {createDepositFt} from './contract/actions/depositFt';
 import {createDeposit} from './contract/actions/deposit';
 import {createGetOrderbookPoll} from './contract/actions/getOrderbookPoll';
+import {createSwap} from './contract/actions/swap';
+import {createSwapFt} from './contract/actions/swapFt';
+import {createSwapNear} from './contract/actions/swapNear';
+import {createGetDryRunSwap} from './contract/actions/getDryRunSwap';
 
 // Native
 import {createAsyncNativeWrapper} from './native/wrapper';
@@ -28,6 +32,7 @@ import {createGetBalanceNear} from './native/actions/getBalanceNear';
 import {createGetBalance} from './native/actions/getBalance';
 import {createGetBalanceFt} from './native/actions/getBalanceFt';
 import {createTransferFt} from './native/actions/transferFt';
+import {createGetTransactionStatus} from './native/actions/getTransactionStatus';
 
 // Websocket
 import {createSyncWebsocketWrapper} from './websocket/wrapper';
@@ -51,45 +56,47 @@ export const createSpin = (config: Config): Spin => {
   const syncWebsocket = createSyncWebsocketWrapper(config);
 
   return {
-    contract: {
-      batchOps: asyncContract(createBatchOps),
-      cancelOrder: asyncContract(createCancelOrder),
-      cancelOrders: asyncContract(createCancelOrders),
-      deposit: asyncContract(createDeposit),
-      depositFt: asyncContract(createDepositFt),
-      depositNear: asyncContract(createDepositNear),
-      getCurrencies: asyncContract(createGetCurrencies),
-      getDeposits: asyncContract(createGetDeposits),
-      getMarket: asyncContract(createGetMarket),
-      getMarkets: asyncContract(createGetMarkets),
-      getOrder: asyncContract(createGetOrder),
-      getOrderbook: asyncContract(createGetOrderbook),
-      getOrderbookPoll: syncContract(createGetOrderbookPoll),
-      getOrders: asyncContract(createGetOrders),
-      placeAsk: asyncContract(createPlaceAsk),
-      placeBid: asyncContract(createPlaceBid),
-      withdraw: asyncContract(createWithdraw),
-    },
-    native: {
-      getBalance: asyncNative(createGetBalance),
-      getBalanceFt: asyncNative(createGetBalanceFt),
-      getBalanceNear: asyncNative(createGetBalanceNear),
-      getBalanceStorage: asyncNative(createGetBalanceStorage),
-      transferFt: asyncNative(createTransferFt),
-    },
-    websocket: {
-      getCandles: syncWebsocket(createGetCandles),
-      getOrdersHistory: syncWebsocket(createGetOrdersHistory),
-      getTrades: syncWebsocket(createGetTrades),
-      listenAccountOrders: syncWebsocket(createListenAccountOrders),
-      listenAccountBalances: syncWebsocket(createListenAccountBalances),
-      listenAccountTrades: syncWebsocket(createListenAccountTrades),
-      listenBookL1: syncWebsocket(createListenBookL1),
-      listenBookL2: syncWebsocket(createListenBookL2),
-      listenBookL3: syncWebsocket(createListenBookL3),
-      listenOrders: syncWebsocket(createListenOrders),
-      listenTrades: syncWebsocket(createListenTrades),
-      ping: syncWebsocket(createPing),
-    },
+    // Contract
+    batchOps: asyncContract(createBatchOps),
+    cancelOrder: asyncContract(createCancelOrder),
+    cancelOrders: asyncContract(createCancelOrders),
+    deposit: asyncContract(createDeposit),
+    depositFt: asyncContract(createDepositFt),
+    depositNear: asyncContract(createDepositNear),
+    getCurrencies: asyncContract(createGetCurrencies),
+    getDeposits: asyncContract(createGetDeposits),
+    getMarket: asyncContract(createGetMarket),
+    getMarkets: asyncContract(createGetMarkets),
+    getOrder: asyncContract(createGetOrder),
+    getOrderbook: asyncContract(createGetOrderbook),
+    getOrderbookPoll: syncContract(createGetOrderbookPoll),
+    getOrders: asyncContract(createGetOrders),
+    placeAsk: asyncContract(createPlaceAsk),
+    placeBid: asyncContract(createPlaceBid),
+    withdraw: asyncContract(createWithdraw),
+    swap: asyncContract(createSwap),
+    swapFt: asyncContract(createSwapFt),
+    swapNear: asyncContract(createSwapNear),
+    getDryRunSwap: asyncContract(createGetDryRunSwap),
+    // Native
+    getBalance: asyncNative(createGetBalance),
+    getBalanceFt: asyncNative(createGetBalanceFt),
+    getBalanceNear: asyncNative(createGetBalanceNear),
+    getBalanceStorage: asyncNative(createGetBalanceStorage),
+    transferFt: asyncNative(createTransferFt),
+    getTransactionStatus: asyncNative(createGetTransactionStatus),
+    // Websocket
+    getCandles: syncWebsocket(createGetCandles),
+    getOrdersHistory: syncWebsocket(createGetOrdersHistory),
+    getTrades: syncWebsocket(createGetTrades),
+    listenAccountOrders: syncWebsocket(createListenAccountOrders),
+    listenAccountBalances: syncWebsocket(createListenAccountBalances),
+    listenAccountTrades: syncWebsocket(createListenAccountTrades),
+    listenBookL1: syncWebsocket(createListenBookL1),
+    listenBookL2: syncWebsocket(createListenBookL2),
+    listenBookL3: syncWebsocket(createListenBookL3),
+    listenOrders: syncWebsocket(createListenOrders),
+    listenTrades: syncWebsocket(createListenTrades),
+    ping: syncWebsocket(createPing),
   };
 };
