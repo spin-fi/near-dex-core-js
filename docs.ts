@@ -70,5 +70,7 @@ export type {
  */
 export type {Subscription} from 'rxjs';
 
-// Spin
-export * from './src';
+/**
+ * @category spin spot
+ */
+export * from './src/spot';
