@@ -1,111 +1,124 @@
-// Spin
-import {Config, Spin} from './types';
+/**
+ * Spin
+ */
+import {SpotSpin} from './api.types';
+import {CoreConfig, Config} from '../types';
+import {createNear} from '../utils/createNear';
+/**
+ * Contract
+ */
+import {getOrderbook} from './contract/getOrderbook';
+import {getMarket} from './contract/getMarket';
+import {getCurrencies} from './contract/getCurrencies';
+import {getOrders} from './contract/getOrders';
+import {getOrder} from './contract/getOrder';
+import {getMarkets} from './contract/getMarkets';
+import {getDeposits} from './contract/getDeposits';
+import {cancelOrder} from './contract/cancelOrder';
+import {placeAsk} from './contract/placeAsk';
+import {placeBid} from './contract/placeBid';
+import {withdraw} from './contract/withdraw';
+import {cancelOrders} from './contract/cancelOrders';
+import {batchOps} from './contract/batchOps';
+import {depositNear} from './contract/depositNear';
+import {deposit} from './contract/deposit';
+import {swap} from './contract/swap';
+import {swapFt} from './contract/swapFt';
+import {swapNear} from './contract/swapNear';
+import {getDryRunSwap} from './contract/getDryRunSwap';
+/**
+ * Native
+ */
+import {getBalanceStorage} from '../native/getBalanceStorage';
+import {getBalanceNear} from '../native/getBalanceNear';
+import {getBalance} from '../native/getBalance';
+import {getBalanceFt} from '../native/getBalanceFt';
+import {transferFt} from '../native/transferFt';
+import {getTransactionStatus} from '../native/getTransactionStatus';
+import {getBalanceStorageBounds} from '../native/getBalanceStorageBounds';
+import {depositStorage} from '../native/depositStorage';
+/**
+ * Websocket
+ */
+import {getCandles} from './websocket/getCandles';
+import {getOrdersHistory} from './websocket/getOrdersHistory';
+import {getTrades} from './websocket/getTrades';
+import {getUserTrades} from './websocket/getUserTrades';
+import {listenAccountBalances} from './websocket/listenAccountBalances';
+import {listenAccountOrders} from './websocket/listenAccountOrders';
+import {listenAccountTrades} from './websocket/listenAccountTrades';
+import {listenBookL1} from './websocket/listenBookL1';
+import {listenBookL2} from './websocket/listenBookL2';
+import {listenBookL3} from './websocket/listenBookL3';
+import {listenOrders} from './websocket/listenOrders';
+import {listenTrades} from './websocket/listenTrades';
+import {ping} from './websocket/ping';
+/**
+ * Bundler
+ */
+import {createSpotBundler} from './bundler/bundler';
 
-// Contract
-import {createAsyncContractWrapper, createSyncContractWrapper} from './contract/wrapper';
-import {createGetOrderbook} from './contract/actions/getOrderbook';
-import {createGetMarket} from './contract/actions/getMarket';
-import {createGetCurrencies} from './contract/actions/getCurrencies';
-import {createGetOrders} from './contract/actions/getOrders';
-import {createGetOrder} from './contract/actions/getOrder';
-import {createGetMarkets} from './contract/actions/getMarkets';
-import {createGetDeposits} from './contract/actions/getDeposits';
-import {createCancelOrder} from './contract/actions/cancelOrder';
-import {createPlaceAsk} from './contract/actions/placeAsk';
-import {createPlaceBid} from './contract/actions/placeBid';
-import {createWithdraw} from './contract/actions/withdraw';
-import {createCancelOrders} from './contract/actions/cancelOrders';
-import {createBatchOps} from './contract/actions/batchOps';
-import {createDepositNear} from './contract/actions/depositNear';
-import {createDepositFt} from './contract/actions/depositFt';
-import {createDeposit} from './contract/actions/deposit';
-import {createGetOrderbookPoll} from './contract/actions/getOrderbookPoll';
-import {createSwap} from './contract/actions/swap';
-import {createSwapFt} from './contract/actions/swapFt';
-import {createSwapNear} from './contract/actions/swapNear';
-import {createGetDryRunSwap} from './contract/actions/getDryRunSwap';
+export const createSpotSpin = (coreConfig: CoreConfig): SpotSpin => {
+  const near = createNear(coreConfig.provider);
 
-// Native
-import {createAsyncNativeWrapper} from './native/wrapper';
-import {createGetBalanceStorage} from './native/actions/getBalanceStorage';
-import {createGetBalanceNear} from './native/actions/getBalanceNear';
-import {createGetBalance} from './native/actions/getBalance';
-import {createGetBalanceFt} from './native/actions/getBalanceFt';
-import {createTransferFt} from './native/actions/transferFt';
-import {createGetTransactionStatus} from './native/actions/getTransactionStatus';
-import {createGetBalanceStorageBounds} from './native/actions/getBalanceStorageBounds';
-import {createDepositStorageFactory, createDepositStorage} from './native/actions/depositStorage';
-import {createCheckDepositStorageFactory} from './native/actions/checkDepositStorage';
-
-// Websocket
-import {createSyncWebsocketWrapper} from './websocket/wrapper';
-import {createGetCandles} from './websocket/actions/getCandles';
-import {createGetOrdersHistory} from './websocket/actions/getOrdersHistory';
-import {createGetTrades} from './websocket/actions/getTrades';
-import {createGetUserTrades} from './websocket/actions/getUserTrades';
-import {createListenAccountBalances} from './websocket/actions/listenAccountBalances';
-import {createListenAccountOrders} from './websocket/actions/listenAccountOrders';
-import {createListenAccountTrades} from './websocket/actions/listenAccountTrades';
-import {createListenBookL1} from './websocket/actions/listenBookL1';
-import {createListenBookL2} from './websocket/actions/listenBookL2';
-import {createListenBookL3} from './websocket/actions/listenBookL3';
-import {createListenOrders} from './websocket/actions/listenOrders';
-import {createListenTrades} from './websocket/actions/listenTrades';
-import {createPing} from './websocket/actions/ping';
-
-export const createSpin = (config: Config): Spin => {
-  const asyncContract = createAsyncContractWrapper(config);
-  const syncContract = createSyncContractWrapper(config);
-  const asyncNative = createAsyncNativeWrapper(config);
-  const syncWebsocket = createSyncWebsocketWrapper(config);
+  const config: Config = {
+    ...coreConfig,
+    near,
+  };
 
   return {
-    // Contract
-    batchOps: asyncContract(createBatchOps),
-    cancelOrder: asyncContract(createCancelOrder),
-    cancelOrders: asyncContract(createCancelOrders),
-    deposit: asyncContract(createDeposit),
-    depositFt: asyncContract(createDepositFt),
-    depositNear: asyncContract(createDepositNear),
-    getCurrencies: asyncContract(createGetCurrencies),
-    getDeposits: asyncContract(createGetDeposits),
-    getMarket: asyncContract(createGetMarket),
-    getMarkets: asyncContract(createGetMarkets),
-    getOrder: asyncContract(createGetOrder),
-    getOrderbook: asyncContract(createGetOrderbook),
-    getOrderbookPoll: syncContract(createGetOrderbookPoll),
-    getOrders: asyncContract(createGetOrders),
-    placeAsk: asyncContract(createPlaceAsk),
-    placeBid: asyncContract(createPlaceBid),
-    withdraw: asyncContract(createWithdraw),
-    swap: asyncContract(createSwap),
-    swapFt: asyncContract(createSwapFt),
-    swapNear: asyncContract(createSwapNear),
-    getDryRunSwap: asyncContract(createGetDryRunSwap),
-    // Native
-    getBalance: asyncNative(createGetBalance),
-    getBalanceFt: asyncNative(createGetBalanceFt),
-    getBalanceNear: asyncNative(createGetBalanceNear),
-    getBalanceStorage: asyncNative(createGetBalanceStorage),
-    transferFt: asyncNative(createTransferFt),
-    getTransactionStatus: asyncNative(createGetTransactionStatus),
-    getBalanceStorageBounds: asyncNative(createGetBalanceStorageBounds),
-    depositStorage: asyncNative(createDepositStorage),
-    depositStorageFactory: asyncNative(createDepositStorageFactory),
-    checkDepositStorageFactory: asyncNative(createCheckDepositStorageFactory),
-    // Websocket
-    getCandles: syncWebsocket(createGetCandles),
-    getOrdersHistory: syncWebsocket(createGetOrdersHistory),
-    getTrades: syncWebsocket(createGetTrades),
-    getUserTrades: syncWebsocket(createGetUserTrades),
-    listenAccountOrders: syncWebsocket(createListenAccountOrders),
-    listenAccountBalances: syncWebsocket(createListenAccountBalances),
-    listenAccountTrades: syncWebsocket(createListenAccountTrades),
-    listenBookL1: syncWebsocket(createListenBookL1),
-    listenBookL2: syncWebsocket(createListenBookL2),
-    listenBookL3: syncWebsocket(createListenBookL3),
-    listenOrders: syncWebsocket(createListenOrders),
-    listenTrades: syncWebsocket(createListenTrades),
-    ping: syncWebsocket(createPing),
+    /**
+     * Contract
+     */
+    batchOps: batchOps.createMethod(config),
+    cancelOrder: cancelOrder.createMethod(config),
+    cancelOrders: cancelOrders.createMethod(config),
+    deposit: deposit.createMethod(config),
+    depositNear: depositNear.createMethod(config),
+    getCurrencies: getCurrencies.createMethod(config),
+    getDeposits: getDeposits.createMethod(config),
+    getMarket: getMarket.createMethod(config),
+    getMarkets: getMarkets.createMethod(config),
+    getOrder: getOrder.createMethod(config),
+    getOrderbook: getOrderbook.createMethod(config),
+    getOrders: getOrders.createMethod(config),
+    placeAsk: placeAsk.createMethod(config),
+    placeBid: placeBid.createMethod(config),
+    withdraw: withdraw.createMethod(config),
+    swap: swap.createMethod(config),
+    swapFt: swapFt.createMethod(config),
+    swapNear: swapNear.createMethod(config),
+    getDryRunSwap: getDryRunSwap.createMethod(config),
+    /**
+     * Native
+     */
+    getBalance: getBalance.createMethod(config),
+    getBalanceFt: getBalanceFt.createMethod(config),
+    getBalanceNear: getBalanceNear.createMethod(config),
+    getBalanceStorage: getBalanceStorage.createMethod(config),
+    transferFt: transferFt.createMethod(config),
+    getTransactionStatus: getTransactionStatus.createMethod(config),
+    getBalanceStorageBounds: getBalanceStorageBounds.createMethod(config),
+    depositStorage: depositStorage.createMethod(config),
+    /**
+     * Websocket
+     */
+    getCandles: getCandles.createMethod(config),
+    getOrdersHistory: getOrdersHistory.createMethod(config),
+    getTrades: getTrades.createMethod(config),
+    getUserTrades: getUserTrades.createMethod(config),
+    listenAccountOrders: listenAccountOrders.createMethod(config),
+    listenAccountBalances: listenAccountBalances.createMethod(config),
+    listenAccountTrades: listenAccountTrades.createMethod(config),
+    listenBookL1: listenBookL1.createMethod(config),
+    listenBookL2: listenBookL2.createMethod(config),
+    listenBookL3: listenBookL3.createMethod(config),
+    listenOrders: listenOrders.createMethod(config),
+    listenTrades: listenTrades.createMethod(config),
+    ping: ping.createMethod(config),
+    /**
+     * Bundler
+     */
+    bundle: createSpotBundler(config),
   };
 };
