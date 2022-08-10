@@ -24,11 +24,16 @@ import type {WithdrawRequest, WithdrawConfig} from '../../contract/withdraw';
 import {TransferFtRequest, TransferFtConfig} from '../../../native/transferFt';
 import {DepositStorageRequest, DepositStorageConfig} from '../../../native/depositStorage';
 
+export type SpotBundlerUnit = () => Promise<CoreParams | undefined>;
+
+export type CustomCreator = () => SpotBundlerUnit;
+
 export interface SpotBundler {
   /**
    * TODO
    */
   call: () => Promise<FinalExecutionOutcome[] | void>;
+  custom: (creator: CustomCreator) => SpotBundler;
   /**
    * Contract
    */
@@ -88,5 +93,3 @@ export interface SpotBundler {
    */
   depositStorage: (request: DepositStorageRequest, config?: DepositStorageConfig) => SpotBundler;
 }
-
-export type SpotBundlerUnit = () => Promise<CoreParams | undefined>;

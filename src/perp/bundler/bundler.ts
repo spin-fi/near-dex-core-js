@@ -4,7 +4,7 @@ import {invariant, guardNotUndefined} from '@spinfi/shared';
  * Spin
  */
 import {PerpBundler, PerpBundlerUnit} from './types';
-import {Config} from '../../types';
+import {CoreConfig} from '../../types';
 import {selectorErrorMessage, contractIdErrorMessage} from './messages';
 /**
  * Contract
@@ -21,7 +21,7 @@ import {withdraw} from '../contract/withdraw';
 import {transferFt} from '../../native/transferFt';
 import {depositStorage} from '../../native/depositStorage';
 
-export const createPerpBundler = (config: Config) => {
+export const createPerpBundler = (config: CoreConfig) => {
   /**
    * Contract
    */
@@ -54,6 +54,9 @@ export const createPerpBundler = (config: Config) => {
             };
           }),
         });
+      },
+      custom: (creator) => {
+        return bundler([...untis, creator()]);
       },
       /**
        * Contract

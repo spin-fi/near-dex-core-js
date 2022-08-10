@@ -28,8 +28,6 @@ export interface PlaceBidConfig {
 
 const GAS = '300000000000000';
 
-const DEADLINE = deadline(30).unwrap();
-
 const METHOD_NAME = 'place_bid';
 
 export const placeBid = createUnit<PlaceBidRequest, PlaceBidConfig>(({paramsify, methodify}) => {
@@ -47,7 +45,7 @@ export const placeBid = createUnit<PlaceBidRequest, PlaceBidConfig>(({paramsify,
                 quantity: request.quantity.toString(),
                 market_order: request.marketOrder,
                 client_order_id: request.clientOrderId,
-                deadline: request.deadline ?? DEADLINE,
+                deadline: request.deadline ?? deadline(30).unwrap(),
               },
               gas: unitConfig?.gas?.toString() ?? GAS,
               deposit: '',

@@ -33,10 +33,6 @@ export interface PlaceAskRequest {
    */
   quantity: BigInt;
   /**
-   * The amount to deposit before placing the order
-   */
-  depositAmount?: BigInt;
-  /**
    * A sign that the order is market
    */
   marketOrder: boolean;

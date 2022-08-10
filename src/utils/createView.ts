@@ -1,8 +1,8 @@
-import {Config} from '../types';
+import {CoreConfig} from '../types';
 
 type Method<T, R> = (request: T) => Promise<R>;
 
-type MethodCreator<T, R> = (config: Config) => Method<T, R>;
+type MethodCreator<T, R> = (config: CoreConfig) => Method<T, R>;
 
 type Utils<T> = {
   methodify: <R>(fn: MethodCreator<T, R>) => MethodCreator<T, R>;

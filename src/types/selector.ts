@@ -25,13 +25,27 @@ export interface CoreParams {
 /**
  * @category spin
  */
+export interface BundlerCoreParams {
+  signerId?: string;
+  receiverId: string;
+  actions: CoreAction[];
+}
+
+/**
+ * @category spin
+ */
+export interface CoreParamsTransactions {
+  transactions: BundlerCoreParams[];
+}
+
+/**
+ * @category spin
+ */
 export interface CoreSelector {
   wallet: () => Promise<{
     signAndSendTransaction: (param: CoreParams) => Promise<FinalExecutionOutcome | void>;
-    signAndSendTransactions: (params: {
-      transactions: (CoreParams & {
-        receiverId: string;
-      })[];
-    }) => Promise<Array<FinalExecutionOutcome> | void>;
+    signAndSendTransactions: (
+      params: CoreParamsTransactions,
+    ) => Promise<Array<FinalExecutionOutcome> | void>;
   }>;
 }

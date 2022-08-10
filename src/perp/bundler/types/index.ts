@@ -19,11 +19,16 @@ import type {WithdrawRequest, WithdrawConfig} from '../../contract/withdraw';
 import {TransferFtRequest, TransferFtConfig} from '../../../native/transferFt';
 import {DepositStorageRequest, DepositStorageConfig} from '../../../native/depositStorage';
 
+export type PerpBundlerUnit = () => Promise<CoreParams | undefined>;
+
+export type CustomCreator = () => PerpBundlerUnit;
+
 export interface PerpBundler {
   /**
    * TODO
    */
   call: () => Promise<FinalExecutionOutcome[] | void>;
+  custom: (creator: CustomCreator) => PerpBundler;
   /**
    * Contract
    */
@@ -63,5 +68,3 @@ export interface PerpBundler {
    */
   depositStorage: (request: DepositStorageRequest, config?: DepositStorageConfig) => PerpBundler;
 }
-
-export type PerpBundlerUnit = () => Promise<CoreParams | undefined>;

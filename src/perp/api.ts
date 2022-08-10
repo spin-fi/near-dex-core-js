@@ -2,8 +2,7 @@
  * Spin
  */
 import {PerpSpin} from './api.types';
-import {CoreConfig, Config} from '../types';
-import {createNear} from '../utils/createNear';
+import {CoreConfig} from '../types';
 /**
  * Contract
  */
@@ -51,14 +50,7 @@ import {getOrdersHistory} from './websocket/getOrdersHistory';
  */
 import {createPerpBundler} from './bundler/bundler';
 
-export const createPerpSpin = (coreConfig: CoreConfig): PerpSpin => {
-  const near = createNear(coreConfig.provider);
-
-  const config: Config = {
-    ...coreConfig,
-    near,
-  };
-
+export const createPerpSpin = (config: CoreConfig): PerpSpin => {
   return {
     /**
      * Contract

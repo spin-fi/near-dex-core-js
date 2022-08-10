@@ -24,7 +24,12 @@ export type {PlaceAskRequest, PlaceAskResponse, PlaceAskConfig} from './contract
 export type {PlaceBidRequest, PlaceBidResponse, PlaceBidConfig} from './contract/placeBid';
 export type {GetBaseCurrencyResponse} from './contract/getBaseCurrency';
 export type {GetBalancesRequest, GetBalancesResponse} from './contract/getBalances';
-export type {GetFundingInfoRequest, GetFundingInfoResponse} from './contract/getFundingInfo';
+export type {
+  GetFundingInfoRequest,
+  GetFundingInfoResponse,
+  FundingInfoPrice,
+  FundingInfoRate,
+} from './contract/getFundingInfo';
 export type {GetPositionsRequest, GetPositionsResponse, Position} from './contract/getPositions';
 export type {WithdrawRequest, WithdrawResponse, WithdrawConfig} from './contract/withdraw';
 export type {DepositRequest, DepositResponse, DepositConfig} from './contract/deposit';
@@ -40,7 +45,7 @@ export type {
   CancelOrdersResponse,
   CancelOrdersConfig,
 } from './contract/cancelOrders';
-export type {GetMarketPricesResponse} from './contract/getMarketPrices';
+export type {GetMarketPricesResponse, MarketPrices} from './contract/getMarketPrices';
 /**
  * Native
  */

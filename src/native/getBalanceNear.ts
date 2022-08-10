@@ -24,7 +24,8 @@ export const getBalanceNear = createView<GetBalanceNearRequest, GetBalanceNearRe
       return async (request) => {
         invariant(config.near, nearErrorMessage('getBalanceNear'));
 
-        return await config.near.balance(request.accountId);
+        const data = await config.near.balance(request.accountId);
+        return data.available;
       };
     });
 

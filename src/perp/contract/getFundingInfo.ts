@@ -6,7 +6,7 @@ import {createView} from '../../utils/createView';
 /**
  * @category getFundingInfo
  */
-interface FundingInfoPrice {
+export interface FundingInfoPrice {
   index_price?: string;
   mid_price?: null;
 }
@@ -14,7 +14,7 @@ interface FundingInfoPrice {
 /**
  * @category getFundingInfo
  */
-interface FundingInfoRate {
+export interface FundingInfoRate {
   avg_mid_price?: string;
   funding_rate?: string;
 }

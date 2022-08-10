@@ -2,8 +2,7 @@
  * Spin
  */
 import {SpotSpin} from './api.types';
-import {CoreConfig, Config} from '../types';
-import {createNear} from '../utils/createNear';
+import {CoreConfig} from '../types';
 /**
  * Contract
  */
@@ -58,14 +57,7 @@ import {ping} from './websocket/ping';
  */
 import {createSpotBundler} from './bundler/bundler';
 
-export const createSpotSpin = (coreConfig: CoreConfig): SpotSpin => {
-  const near = createNear(coreConfig.provider);
-
-  const config: Config = {
-    ...coreConfig,
-    near,
-  };
-
+export const createSpotSpin = (config: CoreConfig): SpotSpin => {
   return {
     /**
      * Contract

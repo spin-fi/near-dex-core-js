@@ -1,19 +1,19 @@
 import {NotifyConfig, NotifyWithStateConfig, MethodConfig} from '@spinfi/websocket';
 import {Subscription} from 'rxjs';
 
-import {Config} from '../types';
+import {CoreConfig} from '../types';
 
 type Notification<T, N> = (request: T, notificationConfig?: NotifyConfig<N>) => Subscription;
 
-type NotificationCreator<T, N> = (config: Config) => Notification<T, N>;
+type NotificationCreator<T, N> = (config: CoreConfig) => Notification<T, N>;
 
 type Snapshot<T, N, S> = (request: T, snapshotConfig?: NotifyWithStateConfig<S, N>) => Subscription;
 
-type SnapshotCreator<T, N, S> = (config: Config) => Snapshot<T, N, S>;
+type SnapshotCreator<T, N, S> = (config: CoreConfig) => Snapshot<T, N, S>;
 
 type Method<T, R> = (request: T, methodConfig?: MethodConfig<R>) => Subscription;
 
-type MethodCreator<T, R> = (config: Config) => Method<T, R>;
+type MethodCreator<T, R> = (config: CoreConfig) => Method<T, R>;
 
 type Utils = {
   notify: <T, N>(fn: NotificationCreator<T, N>) => NotificationCreator<T, N>;

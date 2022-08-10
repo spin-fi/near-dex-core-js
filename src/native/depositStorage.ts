@@ -3,6 +3,7 @@ import {FinalExecutionOutcome} from 'near-api-js/lib/providers';
 
 import {selectorErrorMessage} from './messages';
 import {getBalanceStorage} from './getBalanceStorage';
+import {getBalanceStorageBounds} from './getBalanceStorageBounds';
 import {createUnit} from '../utils/createUnit';
 
 /**
@@ -17,10 +18,6 @@ export interface DepositStorageRequest {
    * Token address
    */
   tokenAddress: string;
-  /**
-   * Amount
-   */
-  amount: BigInt;
 }
 
 /**
@@ -39,6 +36,8 @@ export interface DepositStorageConfig {
 }
 
 const GAS = '50000000000000';
+
+const DEPOSIT = '1';
 
 const METHOD_NAME = 'storage_deposit';
 
@@ -63,6 +62,7 @@ export const depositStorage = createUnit<DepositStorageRequest, DepositStorageCo
 
     const createGetParams = paramsify((config) => {
       const checkIsAvailable = createCheckIsAvailable(config);
+      const getBalanceStorageBoundsMethod = getBalanceStorageBounds.createMethod(config);
 
       return async (request, unitConfig) => {
         const isAvailable = await checkIsAvailable(request);
@@ -70,6 +70,10 @@ export const depositStorage = createUnit<DepositStorageRequest, DepositStorageCo
         if (!isAvailable) {
           return;
         }
+
+        const storageBounds = await getBalanceStorageBoundsMethod({
+          tokenAddress: request.tokenAddress,
+        });
 
         return {
           receiverId: request.tokenAddress,
@@ -82,7 +86,7 @@ export const depositStorage = createUnit<DepositStorageRequest, DepositStorageCo
                   registration_only: true,
                 },
                 gas: unitConfig?.gas?.toString() ?? GAS,
-                deposit: request.amount.toString(),
+                deposit: storageBounds?.min ?? DEPOSIT,
               },
             },
           ],

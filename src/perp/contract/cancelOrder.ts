@@ -40,8 +40,6 @@ export interface CancelOrderConfig {
 
 const GAS = '300000000000000';
 
-const DEADLINE = deadline(30).unwrap();
-
 const METHOD_NAME = 'cancel_order';
 
 export const cancelOrder = createUnit<CancelOrderRequest, CancelOrderConfig>(
@@ -57,7 +55,7 @@ export const cancelOrder = createUnit<CancelOrderRequest, CancelOrderConfig>(
                 args: {
                   market_id: request.marketId,
                   order_id: request.orderId,
-                  deadline: request.deadline ?? DEADLINE,
+                  deadline: request.deadline ?? deadline(30).unwrap(),
                 },
                 gas: unitConfig?.gas?.toString() ?? GAS,
                 deposit: '',

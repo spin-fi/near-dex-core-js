@@ -6,7 +6,7 @@ import {createView} from '../../utils/createView';
 /**
  * @category getMarketPrices
  */
-interface MarketPrices {
+export interface MarketPrices {
   index_price: string;
   mark_price: string;
 }

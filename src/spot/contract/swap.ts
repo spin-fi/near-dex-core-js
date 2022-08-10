@@ -21,11 +21,7 @@ export interface SwapRequest {
   /**
    * Token Address From
    */
-  tokenAddressFrom: string;
-  /**
-   * Token Address To
-   */
-  tokenAddressTo: string;
+  tokenAddress: string;
   /**
    * Market order stop price
    */
@@ -34,10 +30,6 @@ export interface SwapRequest {
    * Amount in decimal
    */
   amount: BigInt;
-  /**
-   * Decimal amount to take from account before swapping
-   */
-  takeFromAccount?: BigInt;
 }
 
 /**
@@ -60,16 +52,10 @@ export const swap = createUnit<SwapRequest, SwapConfig>(({paramsify, methodify})
     const getSwapFtParams = swapFt.createGetParams(config);
 
     return async (request, unitConfig) => {
-      if (isNear(request.tokenAddressFrom)) {
+      if (isNear(request.tokenAddress)) {
         return await getSwapNearParams(request, unitConfig);
       } else {
-        return await getSwapFtParams(
-          {
-            ...request,
-            tokenAddress: request.tokenAddressFrom,
-          },
-          unitConfig,
-        );
+        return await getSwapFtParams(request, unitConfig);
       }
     };
   });
@@ -79,16 +65,10 @@ export const swap = createUnit<SwapRequest, SwapConfig>(({paramsify, methodify})
     const swapFtMethod = swapFt.createMethod(config);
 
     return async (request, unitConfig): Promise<SwapResponse> => {
-      if (isNear(request.tokenAddressFrom)) {
+      if (isNear(request.tokenAddress)) {
         return await swapNearMethod(request, unitConfig);
       } else {
-        return await swapFtMethod(
-          {
-            ...request,
-            tokenAddress: request.tokenAddressFrom,
-          },
-          unitConfig,
-        );
+        return await swapFtMethod(request, unitConfig);
       }
     };
   });

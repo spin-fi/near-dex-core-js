@@ -1,7 +1,6 @@
 import typescript from '@rollup/plugin-typescript';
 import {terser} from 'rollup-plugin-terser';
 import cleaner from 'rollup-plugin-cleaner';
-import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -22,19 +21,18 @@ export default [
       cleaner({
         targets: ['./build/'],
       }),
-      peerDepsExternal(),
       typescript({
         tsconfig: './tsconfig.prod.json',
       }),
       isProd && terser(),
     ],
     external: [
+      '@near-wallet-selector/core',
       '@spinfi/number',
       '@spinfi/shared',
       '@spinfi/websocket',
       'nanoid',
       'near-api-js',
-      'near-transaction-manager',
       'rxjs',
     ],
   },
