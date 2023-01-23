@@ -1,0 +1,21 @@
+{
+  "exclude": ["node_modules", "build", "scripts", "rollup"],
+  "include": ["types", "src", "./docs.ts"],
+  "compilerOptions": {
+    "noEmit": true,
+    "allowJs": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "downlevelIteration": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "strict": true,
+    "declaration": true,
+    "declarationMap": false,
+    "target": "ES2015",
+    "lib": ["ESNext"],
+    "declarationDir": "./types",
+    "moduleResolution": "Node"
+  }
+}

@@ -1,0 +1,20 @@
+- docs
+- - [х] typedoc
+- - [] how to use
+- - [x] enums (extract, reuse)
+- - [x] rename @spinfi/websocket error
+- - [] sub / unsub
+- - [] getMarket id/max_order_count no description
+- cheks
+- - [x] prettier
+- - [x] eslint
+- - [x] ts
+- [x] call methods return types
+- [x] format BigInt
+- [x] gas
+- [x] ammount deposit
+- [] timeout
+- [] retry ???
+- [x] optional ws init
+- websocket
+- - [-] sub / unsub

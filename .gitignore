@@ -1,0 +1,14 @@
+.DS_Store
+node_modules
+
+.cache
+.env
+.vercel
+.output
+
+lerna-debug.log
+yarn-error.log
+
+build
+dist
+docs
