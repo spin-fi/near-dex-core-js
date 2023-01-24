@@ -1,0 +1,17 @@
+.Orderbook {
+  list-style: none;
+}
+
+.Orderbook-Item {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.Orderbook-Price {
+  flex-basis: 1 1 0;
+}
+
+.Orderbook-Quantity {
+  flex-basis: 1 1 0;
+}

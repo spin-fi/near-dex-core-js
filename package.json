@@ -1,6 +1,6 @@
 {
   "name": "@spinfi/core",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "license": "MIT",
   "keywords": [
     "spin",
@@ -30,7 +30,9 @@
   "files": [
     "build/**/*.js",
     "build/**/*.esm.js",
-    "build/**/*.d.ts"
+    "build/**/*.d.ts",
+    "README.md",
+    "CHANGELOG.md"
   ],
   "devDependencies": {
     "@rollup/plugin-typescript": "8.3.1",

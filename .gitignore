@@ -5,6 +5,7 @@ node_modules
 .env
 .vercel
 .output
+.turbo
 
 lerna-debug.log
 yarn-error.log
