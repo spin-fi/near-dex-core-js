@@ -1,7 +1,8 @@
 {
-  "name": "spot-react-contract",
+  "name": "react-contract",
   "version": "0.1.0",
-  "private": true,
+  "description": "Spinfi react contract example",
+  "author": "Andrey Krasovsky <an.krasowsckij@gmail.com>",
   "dependencies": {
     "@spinfi/browser": "^2.1.0",
     "@testing-library/jest-dom": "^5.16.5",

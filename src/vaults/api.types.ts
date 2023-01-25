@@ -50,6 +50,7 @@ import {VaultsGetVaultsAmountResponse} from './vaults/vaultsGetVaultsAmount';
  * Mft
  */
 import {MftGetBalanceRequest, MftGetBalanceResponse} from './mft/mftGetBalance';
+import {MftGetBatchBalanceRequest, MftGetBatchBalanceResponse} from './mft/mftGetBatchBalance';
 import {MftGetVaultBalanceRequest, MftGetVaultBalanceResponse} from './mft/mftGetVaultBalance';
 import {MftGetTotalSupplyRequest, MftGetTotalSupplyResponse} from './mft/mftGetTotalSupply';
 import {
@@ -96,6 +97,10 @@ import {
   AuctionWithdrawResponse,
   AuctionWithdrawConfig,
 } from './auction/auctionWithdraw';
+import {
+  AuctionGetCurrenciesRequest,
+  AuctionGetCurrenciesResponse,
+} from './auction/auctionGetCurrencies';
 /**
  * Oft
  */
@@ -167,6 +172,7 @@ export interface VaultsSpin {
   };
   mft: {
     getBalance: (request: MftGetBalanceRequest) => Promise<MftGetBalanceResponse>;
+    getBatchBalance: (request: MftGetBatchBalanceRequest) => Promise<MftGetBatchBalanceResponse>;
     getVaultBalance: (request: MftGetVaultBalanceRequest) => Promise<MftGetVaultBalanceResponse>;
     getTotalSupply: (request: MftGetTotalSupplyRequest) => Promise<MftGetTotalSupplyResponse>;
     getVaultTotalSupply: (
@@ -203,6 +209,7 @@ export interface VaultsSpin {
       request: AuctionWithdrawRequest,
       config?: AuctionWithdrawConfig,
     ) => Promise<AuctionWithdrawResponse>;
+    getCurrencies: (request: AuctionGetCurrenciesRequest) => Promise<AuctionGetCurrenciesResponse>;
   };
   oft: {
     execute: (request: OftExecuteRequest, config?: OftExecuteConfig) => Promise<OftExecuteResponse>;

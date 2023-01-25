@@ -23,6 +23,7 @@ import {vaultsGetVaultsAmount} from './vaults/vaultsGetVaultsAmount';
  * Mft
  */
 import {mftGetBalance} from './mft/mftGetBalance';
+import {mftGetBatchBalance} from './mft/mftGetBatchBalance';
 import {mftGetVaultBalance} from './mft/mftGetVaultBalance';
 import {mftGetTotalSupply} from './mft/mftGetTotalSupply';
 import {mftGetVaultTotalSupply} from './mft/mftGetVaultTotalSupply';
@@ -47,6 +48,7 @@ import {auctionGetOrders} from './auction/auctionGetOrders';
 import {auctionPlaceBid} from './auction/auctionPlaceBid';
 import {auctionCancelOrder} from './auction/auctionCancelOrder';
 import {auctionWithdraw} from './auction/auctionWithdraw';
+import {auctionGetCurrencies} from './auction/auctionGetCurrencies';
 /**
  * Oft
  */
@@ -88,6 +90,7 @@ export const createVaultsSpin = (config: CoreConfig): VaultsSpin => {
     },
     mft: {
       getBalance: mftGetBalance.createMethod(config),
+      getBatchBalance: mftGetBatchBalance.createMethod(config),
       getVaultBalance: mftGetVaultBalance.createMethod(config),
       getTotalSupply: mftGetTotalSupply.createMethod(config),
       getVaultTotalSupply: mftGetVaultTotalSupply.createMethod(config),
@@ -110,6 +113,7 @@ export const createVaultsSpin = (config: CoreConfig): VaultsSpin => {
       placeBid: auctionPlaceBid.createMethod(config),
       cancelOrder: auctionCancelOrder.createMethod(config),
       withdraw: auctionWithdraw.createMethod(config),
+      getCurrencies: auctionGetCurrencies.createMethod(config),
     },
     oft: {
       execute: oftExecute.createMethod(config),

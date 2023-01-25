@@ -72,6 +72,7 @@ export type {VaultsGetVaultsAmountResponse} from './vaults/vaultsGetVaultsAmount
  * Mft
  */
 export type {MftGetBalanceRequest, MftGetBalanceResponse} from './mft/mftGetBalance';
+export type {MftGetBatchBalanceRequest, MftGetBatchBalanceResponse} from './mft/mftGetBatchBalance';
 export type {MftGetVaultBalanceRequest, MftGetVaultBalanceResponse} from './mft/mftGetVaultBalance';
 export type {MftGetTotalSupplyRequest, MftGetTotalSupplyResponse} from './mft/mftGetTotalSupply';
 export type {
@@ -151,6 +152,11 @@ export type {
   AuctionWithdrawResponse,
   AuctionWithdrawConfig,
 } from './auction/auctionWithdraw';
+export type {
+  AuctionGetCurrenciesRequest,
+  AuctionGetCurrenciesResponse,
+  AuctionCurrencyInfo,
+} from './auction/auctionGetCurrencies';
 /**
  * Oft
  */
